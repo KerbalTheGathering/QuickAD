@@ -2,10 +2,10 @@
 using System.IO;
 using System.Reflection;
 using System.Windows.Input;
-using Microsoft.Win32;
 using QuickAD.Helper_Classes;
 using QuickAD.Models;
 using QuickAD.Services;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace QuickAD.ViewModels
 {
@@ -94,6 +94,8 @@ namespace QuickAD.ViewModels
 				}
 				else
 				{
+					if (!File.Exists(Path.Combine(Directory.GetCurrentDirectory(), fileDialog.SafeFileName))) 
+						File.Copy(fileDialog.FileName, Path.Combine(Directory.GetCurrentDirectory(), fileDialog.SafeFileName));
 					connectionPath.Value = fileDialog.SafeFileName;
 					configFile.Save(ConfigurationSaveMode.Modified);
 					ConfigurationManager.RefreshSection("appSettings");
