@@ -1,0 +1,117 @@
+﻿<UserControl x:Class="QuickAD.View.Passwords.SearchResultView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" >
+    
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MaxWidth="150"/>
+            <ColumnDefinition Width="*" MaxWidth="100"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <ListView Grid.Column="0"
+                  Grid.ColumnSpan="4"
+                  Grid.Row="1"
+                  Grid.RowSpan="3"
+                  Margin="0,0,0,5"
+                  Name="SearchResultsListView"
+				  Width="Auto"
+                  ItemsSource="{Binding SearchResultList}"
+                  SelectedItem="{Binding SelectedUser}">
+            <ListView.View>
+                <GridView>
+                    <GridView.ColumnHeaderContainerStyle>
+                        <Style TargetType="GridViewColumnHeader">
+                            <Setter Property="Height" Value="Auto"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        </Style>
+                    </GridView.ColumnHeaderContainerStyle>
+                    <GridViewColumn Header="Name:" Width="250" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding UserName}" TextAlignment="Left" HorizontalAlignment="Stretch"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn><!--DisplayMemberBinding="{Binding UserName}"/>-->
+                    <GridViewColumn Header="Role:" Width="100" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding UserRole}" TextAlignment="Left" HorizontalAlignment="Stretch"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn><!--DisplayMemberBinding="{Binding UserRole}"/>-->
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <TextBlock Text="New Password"
+                   Margin="5"
+                   Grid.Column="0"
+                   Grid.Row="4"/>
+        <PasswordBox VerticalContentAlignment="Center"
+                     Margin="5"
+                     Grid.Column="1"
+                     Grid.ColumnSpan="3"
+                     Grid.Row="4"
+                     Name="NewPasswordBox"
+                     PasswordChanged="PasswordBox_PasswordChanged"/>
+        <TextBlock Text="Confirm Password"
+                   Margin="5"
+                   Grid.Column="0"
+                   Grid.Row="5"/>
+        <PasswordBox VerticalContentAlignment="Center"
+                     Margin="5"
+                     Grid.Column="1"
+                     Grid.ColumnSpan="3"
+                     Grid.Row="5"
+                     PasswordChanged="PasswordBox_ConfirmPasswordChanged"
+                     Name="ConfirmPasswordBox"/>
+        <TextBlock Text="Change Next Login"
+                   Grid.Column="0"
+                   Grid.Row="6"
+                       DockPanel.Dock="Left"
+                       HorizontalAlignment="Left"
+                       Margin="5"/>
+		<CheckBox Grid.Column="1"
+                  Grid.Row="6"
+                  Margin="3"
+				  IsChecked="{Binding ShouldPassAutoExpire}"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Left"/>
+		<Border BorderBrush="Red" 
+                BorderThickness="1"
+                Margin="5"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Grid.Row="7"
+                Visibility="Visible"
+                Name="ResultMessageContainer">
+            <TextBlock Text="{Binding ResultMessageText}"
+                       Margin="3"
+                       TextWrapping="Wrap"
+                       FontStyle="Italic"
+                       Name="ResultMessageText"/>
+        </Border>
+		<Button Content="Reset Password"
+                Command="{Binding ResetPwCommand}"
+                CommandParameter="{Binding SelectedItem, ElementName=SearchResultsListView}"
+                Padding="10,10"
+                Margin="5"
+                Grid.Column="3"
+                Grid.Row="7"
+				/>
+	</Grid>
+</UserControl>

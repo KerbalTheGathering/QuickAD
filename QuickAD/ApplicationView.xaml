@@ -1,0 +1,48 @@
+﻿<Window x:Class="QuickAD.ApplicationView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:viewModels="clr-namespace:QuickAD.ViewModels"
+        xmlns:home="clr-namespace:QuickAD.View.Home"
+        xmlns:computers="clr-namespace:QuickAD.View.Computers"
+        xmlns:passwords="clr-namespace:QuickAD.View.Passwords"
+        xmlns:settings="clr-namespace:QuickAD.View.Settings"
+        Title="QuickAD" Height="350" Width="525" SizeToContent="Manual">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewModels:HomeViewModel}">
+            <home:HomeView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:ComputerViewModel}">
+            <computers:ComputerView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:PasswordViewModel}">
+            <passwords:PasswordView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:ConfigurationViewModel}">
+            <settings:ConfigurationView />
+        </DataTemplate>
+    </Window.Resources>
+
+    <DockPanel >
+        <Border DockPanel.Dock="Left" BorderBrush="Black" BorderThickness="0,1,1,0">
+            <ItemsControl ItemsSource="{Binding PageViewModels}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="1"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Name}"
+                                Command="{Binding DataContext.ChangePageCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                CommandParameter="{Binding }"
+                                Padding="20,30"
+                                BorderBrush="CornflowerBlue"
+                                Background="CornflowerBlue"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+        <ContentControl Content="{Binding CurrentPageViewModel}" />
+    </DockPanel>
+</Window>
