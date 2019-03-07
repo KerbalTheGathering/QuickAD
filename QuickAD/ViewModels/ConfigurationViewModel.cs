@@ -1,6 +1,10 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Microsoft.Win32;
 using QuickAD.Helper_Classes;
@@ -94,7 +98,11 @@ namespace QuickAD.ViewModels
 				}
 				else
 				{
-					File.Copy(fileDialog.FileName, Path.Combine(Directory.GetCurrentDirectory(), fileDialog.SafeFileName), true);
+					if (fileDialog.FileName != Path.Combine(Directory.GetCurrentDirectory(), fileDialog.SafeFileName))
+					{
+						File.Copy(fileDialog.FileName,
+							Path.Combine(Directory.GetCurrentDirectory(), fileDialog.SafeFileName), true);
+					}
 					connectionPath.Value = fileDialog.SafeFileName;
 					configFile.Save(ConfigurationSaveMode.Modified);
 					ConfigurationManager.RefreshSection("appSettings");

@@ -70,6 +70,7 @@
 		</Border>
 		<Button Content="Import"
                 Command="{Binding ImportCommand}"
+				IsEnabled="{Binding CanImport}"
                 Padding="10,10"
                 Margin="5"
                 Grid.Column="3"

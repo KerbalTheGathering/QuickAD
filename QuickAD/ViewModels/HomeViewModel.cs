@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -22,6 +23,8 @@ namespace QuickAD.ViewModels
 		private Brush _staffColor;
 		private Brush _nonStaffColor;
 		private Brush _computerColor;
+		private volatile bool _canRefresh;
+		private bool[] _refreshThreadStatus = {false, false, false, false};
 		private ICommand _refreshCommand;
 
 		#endregion // Fields
@@ -159,6 +162,19 @@ namespace QuickAD.ViewModels
 			}
 		}
 
+		public bool CanRefresh
+		{
+			get { return _canRefresh; }
+			set
+			{
+				if (_canRefresh != value)
+				{
+					_canRefresh = value;
+					OnPropertyChanged("CanRefresh");
+				}
+			}
+		}
+
 		public ICommand RefreshCommand
 		{
 			get
@@ -180,43 +196,52 @@ namespace QuickAD.ViewModels
 
 		private void RefreshStatusText()
 		{
+			CanRefresh = false;
 			AuthenticationName = /*Environment.UserName;*/ System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 			SetAllStatusToPending();
 
 			Task.Run(async () =>
 			{
+				_refreshThreadStatus[0] = true;
 				var status = await _adService.ConnectionStatus(AdService.ConnectionType.Default);
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					DefaultConnectionStatus = status ? "Success" : "Failed";
 					DefaultColor = GetStatusColor(status);
+					CanRefresh = UpdateRefreshStatus(0);
 				});
 			});
 			Task.Run(async () =>
 			{
+				_refreshThreadStatus[1] = true;
 				var status = await _adService.ConnectionStatus(AdService.ConnectionType.Staff);
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					StaffConnectionStatus = status ? "Success" : "Failed";
 					StaffColor = GetStatusColor(status);
+					CanRefresh = UpdateRefreshStatus(1);
 				});
 			});
 			Task.Run(async () =>
 			{
+				_refreshThreadStatus[2] = true;
 				var status = await _adService.ConnectionStatus(AdService.ConnectionType.NonStaff);
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					NonStaffConnectionStatus = status ? "Success" : "Failed";
 					NonStaffColor = GetStatusColor(status);
+					CanRefresh = UpdateRefreshStatus(2);
 				});
 			});
 			Task.Run(async () =>
 			{
+				_refreshThreadStatus[3] = true;
 				var status = await _adService.ConnectionStatus(AdService.ConnectionType.Computers);
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					ComputerConnectionStatus = status ? "Success" : "Failed";
 					ComputerColor = GetStatusColor(status);
+					CanRefresh = UpdateRefreshStatus(3);
 				});
 			});
 
@@ -239,6 +264,12 @@ namespace QuickAD.ViewModels
 					= NonStaffColor
 						= ComputerColor
 							= Brushes.CornflowerBlue;
+		}
+
+		private bool UpdateRefreshStatus(int index)
+		{
+			_refreshThreadStatus[index] = false;
+			return !_refreshThreadStatus.Contains(true);
 		}
 
 		private void Refresh()

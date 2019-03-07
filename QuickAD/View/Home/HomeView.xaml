@@ -104,6 +104,7 @@
 					Grid.Column="3"
 					Background="CornflowerBlue"
 					Content="Refresh"
+					IsEnabled="{Binding CanRefresh, Mode=OneWay}"
 					Command="{Binding RefreshCommand}"
 			/>
 		</Grid>
