@@ -171,7 +171,9 @@ namespace QuickAD.ViewModels
 					{
 						var computer = await _adService.GetComputersAsync(c, UpdateResultMessageText);
 						if(computer.Count > 0)
-							await _adService.SetDescriptionAsync(computer[0], desc, UpdateResultMessageText);
+							await _adService.SetDescriptionAsync(computer[0]
+									, DescriptionPrefix.GetFullDescription(desc, computer[0].DescPrefix)
+									, UpdateResultMessageText);
 						Application.Current.Dispatcher.Invoke(() =>
 						{
 							completed++;

@@ -16,8 +16,8 @@ namespace QuickAD.Models
 		public Computer(string name, string description)
 		{
 			Name = name;
-			DescPrefix = Helper_Classes.DescriptionPrefix.GetDescriptionPrefix(description);
-			Description = Helper_Classes.DescriptionPrefix.GetTrimmedDescription(description, DescPrefix);
+			DescPrefix = DescriptionPrefix.GetDescriptionPrefix(description);
+			Description = DescriptionPrefix.GetTrimmedDescription(description, DescPrefix);
 		}
 
 		public Computer(string name, string description, string distinguishedName)
@@ -28,7 +28,7 @@ namespace QuickAD.Models
 			Description = DescriptionPrefix.GetTrimmedDescription(description, DescPrefix);
 		}
 
-		public Computer(string name,string description, string distinguishedName, string descPrefix)
+		public Computer(string name, string description, string distinguishedName, string descPrefix)
 		{
 			Name = name;
 			Description = description;

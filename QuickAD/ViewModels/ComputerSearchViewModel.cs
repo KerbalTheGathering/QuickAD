@@ -39,32 +39,21 @@ namespace QuickAD.ViewModels
 
 		#region Properties
 
-		public string Name
-		{
-			get
-			{
-				return "Computer Search";
-			}
-		}
+		public string Name => "Computer Search";
 
 		public ICommand SaveChangesCommand
 		{
 			get
 			{
-				if (_saveChangesCommand == null)
-				{
-					_saveChangesCommand = new RelayCommand(
-						p => SaveChanges((Computer)p),
-						p => p is Computer);
-				}
-
-				return _saveChangesCommand;
+				return _saveChangesCommand ?? (_saveChangesCommand = new RelayCommand(
+					       p => SaveChanges((Computer) p),
+					       p => p is Computer));
 			}
 		}
 
 		public ObservableCollection<Computer> SearchResultList
 		{
-			get { return _computerSearchResults; }
+			get => _computerSearchResults;
 			set
 			{
 				if (_computerSearchResults != value)
@@ -77,7 +66,7 @@ namespace QuickAD.ViewModels
 
 		public string ResultMessageText
 		{
-			get { return _resultMessageText; }
+			get => _resultMessageText;
 			set
 			{
 				if (_resultMessageText != value)
@@ -90,7 +79,7 @@ namespace QuickAD.ViewModels
 
 		public Computer SelectedComputer
 		{
-			get { return _selectedComputer; }
+			get => _selectedComputer;
 			set
 			{
 				if (_selectedComputer != value)
@@ -106,10 +95,7 @@ namespace QuickAD.ViewModels
 
 		public string SelectedDescription
 		{
-			get
-			{
-				return _selectedDescription ?? "";
-			}
+			get => _selectedDescription ?? "";
 			set
 			{
 				if(_selectedDescription != value)
@@ -194,7 +180,7 @@ namespace QuickAD.ViewModels
 				var tmpComp = await _adService.SetDescriptionAsync(_selectedComputer.DistinguishedName
 					              , _selectedComputer.Name
 					              , DescriptionPrefix.GetFullDescription(_selectedDescription
-						              , _selectedComputer.DescPrefix)
+										, _selectedComputer.DescPrefix)
 					              , _setResultMessage) ?? newDescription;
 				Application.Current.Dispatcher.Invoke(() =>
 				{
