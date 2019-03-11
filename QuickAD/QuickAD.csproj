@@ -110,6 +110,7 @@
     <Compile Include="Helper Classes\RelayCommand.cs" />
     <Compile Include="Models\Computer.cs" />
     <Compile Include="Services\ComputerObjectCache.cs" />
+    <Compile Include="Services\PsiphonFilter.cs" />
     <Compile Include="ViewModels\ApplicationViewModel.cs" />
     <Compile Include="ViewModels\ComputerImportViewModel.cs" />
     <Compile Include="ViewModels\ComputerSearchViewModel.cs" />

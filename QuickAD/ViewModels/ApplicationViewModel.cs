@@ -23,14 +23,16 @@ namespace QuickAD.ViewModels
 
         public ApplicationViewModel()
         {
-			DescriptionPrefix.Initialize();
-			LoadAppSettings();
-			var adService = new AdService();
-			PageViewModels.Add(new HomeViewModel(adService));
-			PageViewModels.Add(new ComputerViewModel(adService));
-			PageViewModels.Add(new PasswordViewModel(adService));
-			PageViewModels.Add(new ConfigurationViewModel(adService));
-			CurrentPageViewModel = PageViewModels[0];
+			PsiphonFilter.SearchRemoteDirectory("Gunter");
+			//DescriptionPrefix.Initialize();
+			//LoadAppSettings();
+			//var adService = new AdService();
+			//PageViewModels.Add(new HomeViewModel(adService));
+			//PageViewModels.Add(new ComputerViewModel(adService));
+			//PageViewModels.Add(new PasswordViewModel(adService));
+			//PageViewModels.Add(new ConfigurationViewModel(adService));
+			//CurrentPageViewModel = PageViewModels[0];
+
         }
 
         #region Properties / Commands
