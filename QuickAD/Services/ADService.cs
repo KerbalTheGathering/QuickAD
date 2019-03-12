@@ -390,7 +390,7 @@ namespace QuickAD.Services
 		/// <returns>Returns the modified computer object</returns>
 		public async Task<Computer> SetDescriptionAsync(string compDn, string compName, string desc, Action<string> message)
 		{
-			Computer changedComp = new Computer();
+			var changedComp = new Computer();
 			try
 			{
 				using (DirectorySearcher adSearcher = new DirectorySearcher(_createConnection(ConnectionType.Computers)
@@ -410,10 +410,7 @@ namespace QuickAD.Services
 									if (sr.GetDirectoryEntry().Properties["name"].Value.ToString() != compName)
 										continue;
 									var entry = sr.GetDirectoryEntry();
-									entry.Properties["description"].Value =
-										DescriptionPrefix.GetNewDescriptionWithPrefix(
-											entry.Properties["description"].Value.ToString()
-											, desc);
+									entry.Properties["description"].Value = desc;
 									entry.CommitChanges();
 									entry.Close();
 									changedComp = new Computer(compName, desc, compDn);
@@ -448,12 +445,12 @@ namespace QuickAD.Services
 		/// Sets the Description property of the searched computer
 		/// </summary>
 		/// <param name="computer">Computer's description to set</param>
-		/// <param name="desc">Description with prefix to set</param>
+		/// <param name="desc">Description (including prefix) to set</param>
 		/// <param name="message">Result Message</param>
 		/// <returns></returns>
 		public async Task<Computer> SetDescriptionAsync(Computer computer, string desc, Action<string> message)
 		{
-			Computer changedComp = new Computer();
+			var changedComp = new Computer();
 			try
 			{
 				using (DirectorySearcher adSearcher = new DirectorySearcher(_createConnection(ConnectionType.Computers)
@@ -471,10 +468,7 @@ namespace QuickAD.Services
 								if (sr.GetDirectoryEntry().Properties["name"].Value.ToString() == computer.Name)
 								{
 									var entry = sr.GetDirectoryEntry();
-									entry.Properties["description"].Value =
-										DescriptionPrefix.GetNewDescriptionWithPrefix(
-											entry.Properties["description"].Value.ToString()
-											, desc);
+									entry.Properties["description"].Value = desc;
 									entry.CommitChanges();
 									entry.Close();
 									changedComp = new Computer(computer.Name, desc, computer.DistinguishedName);

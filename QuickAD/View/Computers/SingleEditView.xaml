@@ -41,6 +41,7 @@
                     Padding="5" 
                     Content="Search"
 					IsDefault="True"
+					IsEnabled="{Binding CompSearchViewModel.CanSearch, Mode=OneWay}"
                     Command="{Binding SearchCommand}"
                     CommandParameter="{Binding Text, ElementName=ComputerSearchBox}"/>
 			<DockPanel Grid.Row="1" 

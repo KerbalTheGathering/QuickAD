@@ -1,5 +1,4 @@
-﻿using System;
-using QuickAD.Helper_Classes;
+﻿using QuickAD.Helper_Classes;
 using QuickAD.Models;
 using QuickAD.Services;
 using System.Collections.ObjectModel;
@@ -20,8 +19,8 @@ namespace QuickAD.ViewModels
 		private Computer _selectedComputer;
 		private string _selectedDescription = "";
 		private string _resultMessageText;
-		private bool _isSearching;
-		private bool _isSaving;
+		private bool _canSearch;
+		private volatile bool _canSave;
 		private readonly Computer _nullErrorComputer;
 
 		#endregion // Fields
@@ -29,7 +28,7 @@ namespace QuickAD.ViewModels
 		public ComputerSearchViewModel(AdService adService)
 		{
 			_adService = adService;
-			_isSearching = _isSaving = false;
+			_canSearch = _canSave = true;
 			_nullErrorComputer = new Computer()
 			{
 				Name = "Null Error",
@@ -40,32 +39,21 @@ namespace QuickAD.ViewModels
 
 		#region Properties
 
-		public string Name
-		{
-			get
-			{
-				return "Computer Search";
-			}
-		}
+		public string Name => "Computer Search";
 
 		public ICommand SaveChangesCommand
 		{
 			get
 			{
-				if (_saveChangesCommand == null)
-				{
-					_saveChangesCommand = new RelayCommand(
-						p => SaveChangesAsync((Computer)p),
-						p => p is Computer);
-				}
-
-				return _saveChangesCommand;
+				return _saveChangesCommand ?? (_saveChangesCommand = new RelayCommand(
+					       p => SaveChanges((Computer) p),
+					       p => p is Computer));
 			}
 		}
 
 		public ObservableCollection<Computer> SearchResultList
 		{
-			get { return _computerSearchResults; }
+			get => _computerSearchResults;
 			set
 			{
 				if (_computerSearchResults != value)
@@ -78,7 +66,7 @@ namespace QuickAD.ViewModels
 
 		public string ResultMessageText
 		{
-			get { return _resultMessageText; }
+			get => _resultMessageText;
 			set
 			{
 				if (_resultMessageText != value)
@@ -91,7 +79,7 @@ namespace QuickAD.ViewModels
 
 		public Computer SelectedComputer
 		{
-			get { return _selectedComputer; }
+			get => _selectedComputer;
 			set
 			{
 				if (_selectedComputer != value)
@@ -107,17 +95,40 @@ namespace QuickAD.ViewModels
 
 		public string SelectedDescription
 		{
-			get
-			{
-				if (_selectedDescription == null) return "";
-				return _selectedDescription;
-			}
+			get => _selectedDescription ?? "";
 			set
 			{
 				if(_selectedDescription != value)
 				{
 					_selectedDescription = value;
+					CheckDescription();
 					OnPropertyChanged("SelectedDescription");
+				}
+			}
+		}
+
+		public bool CanSearch 
+		{
+			get => _canSearch;
+			set
+			{
+				if (_canSearch != value)
+				{
+					_canSearch = value;
+					OnPropertyChanged("CanSearch");
+				}
+			}
+		}
+
+		public bool CanSave
+		{
+			get => _canSave;
+			set
+			{
+				if (_canSave != value)
+				{
+					_canSave = value;
+					OnPropertyChanged("CanSave");
 				}
 			}
 		}
@@ -137,39 +148,39 @@ namespace QuickAD.ViewModels
 			ResultMessageText = message;
 		}
 
-		public async void Search(string search)
+		public void Search(string search)
 		{
-			if (_isSearching) return;
+			if (!_canSearch) return;
 			if (string.IsNullOrEmpty(search) || search.Length < 3)
 			{
 				ResultMessageText = "Search does not meet minimum length requirement.";
 				return;
 			}
 
-			await Task.Run(async () =>
+			Task.Run(async () =>
 			{
-				_isSearching = true;
+				SetCanModify(false);
 				var resultList = await _adService.GetComputersAsync(search, _setResultMessage);
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					SearchResultList = resultList;
 					if (SearchResultList != null && SearchResultList.Count > 0) SelectedComputer = SearchResultList[0];
 					else SelectedComputer = _nullErrorComputer;
-					_isSearching = false;
+					SetCanModify(true);
 				});
 			});
 		}
 
-		public async void SaveChangesAsync(Computer newDescription)
+		public void SaveChanges(Computer newDescription)
 		{
-			if (_isSaving) return;
-			await Task.Run(async () =>
+			if (!_canSave) return;
+			Task.Run(async () =>
 			{
-				_isSaving = true;
+				SetCanModify(false);
 				var tmpComp = await _adService.SetDescriptionAsync(_selectedComputer.DistinguishedName
 					              , _selectedComputer.Name
 					              , DescriptionPrefix.GetFullDescription(_selectedDescription
-						              , _selectedComputer.DescPrefix)
+										, _selectedComputer.DescPrefix)
 					              , _setResultMessage) ?? newDescription;
 				Application.Current.Dispatcher.Invoke(() =>
 				{
@@ -177,9 +188,19 @@ namespace QuickAD.ViewModels
 					_computerSearchResults.Remove(SelectedComputer);
 
 					SelectedComputer = _computerSearchResults[_computerSearchResults.IndexOf(tmpComp)];
-					_isSaving = false;
+					SetCanModify(true);
 				});
 			});
+		}
+
+		public void CheckDescription()
+		{
+			CanSave = _selectedDescription != DescriptionPrefix.GetTrimmedDescription(_selectedComputer.Description);
+		}
+
+		private void SetCanModify(bool setting)
+		{
+			CanSearch = CanSave = setting;
 		}
 
 		#endregion // Methods

@@ -82,6 +82,17 @@ namespace QuickAD.Helper_Classes
 		}
 
 		/// <summary>
+		/// Returns the computer's description minus the description prefix
+		/// </summary>
+		/// <param name="desc">Description</param>
+		/// <returns>Trimmed Description string</returns>
+		public static string GetTrimmedDescription(string desc)
+		{
+			var index = GetDescriptionPrefix(desc).Length;
+			return desc.Substring(index).Trim();
+		}
+
+		/// <summary>
 		/// Determines which prefix was used in the original description
 		/// </summary>
 		/// <param name="oldDesc">Description pulled from server</param>

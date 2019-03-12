@@ -35,14 +35,11 @@ namespace QuickAD.ViewModels
 
 		#region Properties
 
-		public string Name
-		{
-			get { return "Computer Import"; }
-		}
+		public string Name => "Computer Import";
 
 		public ObservableCollection<BatchImport> BatchImportList
 		{
-			get { return _batchImports; }
+			get => _batchImports;
 			set
 			{
 				if (_batchImports != value)
@@ -70,7 +67,7 @@ namespace QuickAD.ViewModels
 
 		public float JobProgress
 		{
-			get { return _jobProgress; }
+			get => _jobProgress;
 			set
 			{
 				if (_jobProgress != value)
@@ -83,7 +80,7 @@ namespace QuickAD.ViewModels
 
 		public string ResultMessageText
 		{
-			get { return _resultMessageText; }
+			get => _resultMessageText;
 			set
 			{
 				if (_resultMessageText != value)
@@ -94,16 +91,42 @@ namespace QuickAD.ViewModels
 			}
 		}
 
+		public bool CanImport
+		{
+			get => !_isImporting;
+			set
+			{
+				if (_isImporting != value)
+				{
+					_isImporting = value;
+					OnPropertyChanged("CanImport");
+				}
+			}
+		}
+
+		public bool CanSetFile
+		{
+			get => !_isSetting;
+			set
+			{
+				if (_isSetting != value)
+				{
+					_isSetting = value;
+					OnPropertyChanged("CanSetFile");
+				}
+			}
+		}
+
 		#endregion // Properties
 
 		#region Methods
 
-		public async void SetFile(string file)
+		public void SetFile(string file)
 		{
 			if (_isSetting || string.IsNullOrEmpty(file)) return;
 			BatchImportList = _emptyBatchImports;
 			JobProgress = 0;
-			await Task.Run(() =>
+			Task.Run(() =>
 			{
 				_isSetting = true;
 				_fileLocation = file;
@@ -115,7 +138,6 @@ namespace QuickAD.ViewModels
 				{
 					try
 					{
-						//if (_batchImports == null)
 						BatchImportList = new ObservableCollection<BatchImport>();
 						foreach (var item in importList)
 						{
@@ -149,7 +171,9 @@ namespace QuickAD.ViewModels
 					{
 						var computer = await _adService.GetComputersAsync(c, UpdateResultMessageText);
 						if(computer.Count > 0)
-							await _adService.SetDescriptionAsync(computer[0], desc, UpdateResultMessageText);
+							await _adService.SetDescriptionAsync(computer[0]
+									, DescriptionPrefix.GetFullDescription(desc, computer[0].DescPrefix)
+									, UpdateResultMessageText);
 						Application.Current.Dispatcher.Invoke(() =>
 						{
 							completed++;

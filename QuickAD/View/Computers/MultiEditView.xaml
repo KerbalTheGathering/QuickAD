@@ -43,7 +43,7 @@
 			        Margin="0,5,15,5" 
 			        Padding="5" 
 			        Content="Browse"
-			        IsDefault="True"
+			        IsEnabled="{Binding CompImportViewModel.CanSetFile, Mode=OneWay}"
 			        Command="{Binding SearchCommand}"
 			        CommandParameter="{Binding Text, ElementName=DirectoryBox}"/>
 			<DockPanel Grid.Row="1" 
