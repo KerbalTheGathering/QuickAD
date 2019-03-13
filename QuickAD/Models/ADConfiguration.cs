@@ -5,72 +5,21 @@ namespace QuickAD.Models
 {
 	static class AdConfiguration
 	{
-		#region Fields
-
-		private static string _configFilePath;
-		private static string _sitePrefix;
-		private static string _defaultConnection;
-		private static string _computerSearch;
-		private static string _staffUserSearch;
-		private static string _nonStaffUserSearch;
-
-		#endregion // Fields
-
-		public static void EmptyAdConfiguration()
-		{
-			_sitePrefix = "";
-			_defaultConnection = "";
-			_computerSearch = "";
-			_staffUserSearch = "";
-			_nonStaffUserSearch = "";
-		}
-
-		public static void SetAdConfiguration(string sitePrefix, string defaultConnection, string computerSearch, string staffUserSearch, string nonStaffUserSearch)
-		{
-			_sitePrefix = sitePrefix;
-			_defaultConnection = defaultConnection;
-			_computerSearch = computerSearch;
-			_staffUserSearch = staffUserSearch;
-			_nonStaffUserSearch = nonStaffUserSearch;
-		}
-
 		#region Properties
 
-		public static string FilePath
-		{
-			get { return _configFilePath; }
-			set { _configFilePath = value; }
-		}
+		public static string Name { get; set; }
 
-		public static string SitePrefix
-		{
-			get { return _sitePrefix; }
-			set { _sitePrefix = value; }
-		}
+		public static string FilePath { get; set; }
 
-		public static string ComputerSearch
-		{
-			get { return _computerSearch; }
-			set { _computerSearch = value; }
-		}
+		public static string SitePrefix { get; set; }
 
-		public static string StaffUserSearch
-		{
-			get { return _staffUserSearch; }
-			set { _staffUserSearch = value; }
-		}
+		public static string ComputerSearch { get; set; }
 
-		public static string NonStaffUserSearch
-		{
-			get { return _nonStaffUserSearch; }
-			set { _nonStaffUserSearch = value; }
-		}
+		public static string StaffUserSearch { get; set; }
 
-		public static string DefaultConnection
-		{
-			get { return _defaultConnection; }
-			set { _defaultConnection = value; }
-		}
+		public static string NonStaffUserSearch { get; set; }
+
+		public static string DefaultConnection { get; set; }
 
 		#endregion // Properties
 		
@@ -78,11 +27,10 @@ namespace QuickAD.Models
 
 		public static void GetConfigFromFile(string path = "")
 		{
-			EmptyAdConfiguration();
 			path = Path.Combine(Directory.GetCurrentDirectory(), path);
-			if (path == "" || !File.Exists(path)) return;
+			if (!File.Exists(path)) return;
 
-			_configFilePath = path;
+			FilePath = path;
 			try
 			{
 				using (JsonTextReader reader = new JsonTextReader(new StreamReader(path)))
@@ -97,23 +45,23 @@ namespace QuickAD.Models
 								{
 									case "ComputerSearch":
 										reader.Read();
-										_computerSearch = reader.Value.ToString();
+										ComputerSearch = reader.Value.ToString();
 										break;
 									case "StaffUserSearch":
 										reader.Read();
-										_staffUserSearch = reader.Value.ToString();
+										StaffUserSearch = reader.Value.ToString();
 										break;
 									case "NonStaffUserSearch":
 										reader.Read();
-										_nonStaffUserSearch = reader.Value.ToString();
+										NonStaffUserSearch = reader.Value.ToString();
 										break;
 									case "DefaultConnection":
 										reader.Read();
-										_defaultConnection = reader.Value.ToString();
+										DefaultConnection = reader.Value.ToString();
 										break;
 									case "SitePrefix":
 										reader.Read();
-										_sitePrefix = reader.Value.ToString();
+										SitePrefix = reader.Value.ToString();
 										break;
 								}
 							}
