@@ -1,10 +1,7 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using Microsoft.Win32;
 using QuickAD.Helper_Classes;
@@ -22,6 +19,12 @@ namespace QuickAD.ViewModels
 		private ConfigDetailViewModel _configDetailViewModel;
 
 		#endregion // Fields
+		
+		public ConfigurationViewModel(AdService adService)
+		{
+			_adService = adService;
+			_configDetailViewModel = new ConfigDetailViewModel();
+		}
 
 		#region Properties
 
@@ -39,13 +42,7 @@ namespace QuickAD.ViewModels
 				return _browseCommand;
 			}
 		}
-
-		public ConfigurationViewModel(AdService adService)
-		{
-			_adService = adService;
-			_configDetailViewModel = new ConfigDetailViewModel(_adService);
-		}
-
+		
 		public string Name
 		{
 			get { return "Settings"; }

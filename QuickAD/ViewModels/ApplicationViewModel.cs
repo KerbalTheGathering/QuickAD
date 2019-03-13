@@ -19,6 +19,7 @@ namespace QuickAD.ViewModels
         private IPageViewModel _currentPageViewModel;
         private List<IPageViewModel> _pageViewModels;
 
+
         #endregion // Fields
 
         public ApplicationViewModel()
@@ -45,14 +46,11 @@ namespace QuickAD.ViewModels
             }
         }
 
-        public List<IPageViewModel> PageViewModels
-        {
-            get { return _pageViewModels ?? (_pageViewModels = new List<IPageViewModel>()); }
-        }
+        public List<IPageViewModel> PageViewModels => _pageViewModels ?? (_pageViewModels = new List<IPageViewModel>());
 
         public IPageViewModel CurrentPageViewModel
         {
-            get { return _currentPageViewModel; }
+            get => _currentPageViewModel;
             set
             {
                 if (_currentPageViewModel != value)
@@ -89,9 +87,9 @@ namespace QuickAD.ViewModels
 	        }
 	        else
 	        {
-				AdConfiguration.GetConfigFromFile(connectionPath.Value);
-	        }
-        }
+		        AdConfiguration.GetConfigFromFile(connectionPath.Value);
+			}
+		}
 
         #endregion // Methods
     }

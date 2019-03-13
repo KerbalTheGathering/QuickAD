@@ -1,39 +1,96 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Newtonsoft.Json;
 
 namespace QuickAD.Models
 {
-	static class AdConfiguration
+	class AdConfiguration
 	{
 		#region Properties
 
-		public static string Name { get; set; }
+		public string ConfigName { get; set; }
 
-		public static string FilePath { get; set; }
+		public string FilePath { get; set; }
 
-		public static string SitePrefix { get; set; }
+		public string SitePrefix { get; set; }
 
-		public static string ComputerSearch { get; set; }
+		public string ComputerSearch { get; set; }
 
-		public static string StaffUserSearch { get; set; }
+		public string StaffUserSearch { get; set; }
 
-		public static string NonStaffUserSearch { get; set; }
+		public string NonStaffUserSearch { get; set; }
 
-		public static string DefaultConnection { get; set; }
+		public string DefaultConnection { get; set; }
+
+		public static AdConfiguration CurrentConfiguration { get; set; }
+
+		public static List<AdConfiguration> Configurations { get; private set; }
 
 		#endregion // Properties
-		
+
 		#region Methods
 
-		public static void GetConfigFromFile(string path = "")
+		/// <summary>
+		/// Use AppSettings in App.config to set the last used configuration as active.
+		/// </summary>
+		public static void SetCurrentConfigurationFromLastUsed()
+		{
+			var configFile = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);
+			var lastUsed = configFile.AppSettings.Settings["LastUsedConnections"];
+			if (lastUsed == null)
+			{
+				lastUsed = configFile.AppSettings.Settings["DefaultConnections"];
+			}
+
+			foreach (var adConfiguration in Configurations)
+			{
+				if (lastUsed.Value == adConfiguration.SitePrefix)
+				{
+					CurrentConfiguration = adConfiguration;
+				}
+			}
+
+			if (CurrentConfiguration == null) CurrentConfiguration = Configurations[0];
+		}
+
+		/// <summary>
+		/// Populate the Configuration List from passed file paths.
+		/// </summary>
+		/// <param name="paths">File paths to create new AdConfiguration objects from.</param>
+		public static void PopulateConfigurations(List<string> paths)
+		{
+			if (paths == null) return;
+			var configs = new List<AdConfiguration>();
+			foreach (var path in paths)
+			{
+				var tmp = GetConfigFromFile(path);
+				if (tmp == new AdConfiguration()) continue;
+				configs.Add(tmp);
+			}
+
+			Configurations = new List<AdConfiguration>(configs.OrderBy(u => u.ConfigName));
+		}
+
+		/// <summary>
+		/// Create a new AdConfiguration from the file at the specified path.
+		/// </summary>
+		/// <param name="path">Path to config file.</param>
+		/// <returns>New AdConfiguration, empty if error reading file.</returns>
+		private static AdConfiguration GetConfigFromFile(string path = "")
 		{
 			path = Path.Combine(Directory.GetCurrentDirectory(), path);
-			if (!File.Exists(path)) return;
+			if (!File.Exists(path)) return new AdConfiguration();
 
-			FilePath = path;
+			var config = new AdConfiguration
+			{
+				FilePath = path
+			};
 			try
 			{
-				using (JsonTextReader reader = new JsonTextReader(new StreamReader(path)))
+				using (var reader = new JsonTextReader(new StreamReader(path)))
 				{
 					while (reader.Read())
 					{
@@ -43,25 +100,29 @@ namespace QuickAD.Models
 							{
 								switch (reader.Value)
 								{
+									case "Name":
+										reader.Read();
+										config.ConfigName = reader.Value.ToString();
+										break;
 									case "ComputerSearch":
 										reader.Read();
-										ComputerSearch = reader.Value.ToString();
+										config.ComputerSearch = reader.Value.ToString();
 										break;
 									case "StaffUserSearch":
 										reader.Read();
-										StaffUserSearch = reader.Value.ToString();
+										config.StaffUserSearch = reader.Value.ToString();
 										break;
 									case "NonStaffUserSearch":
 										reader.Read();
-										NonStaffUserSearch = reader.Value.ToString();
+										config.NonStaffUserSearch = reader.Value.ToString();
 										break;
 									case "DefaultConnection":
 										reader.Read();
-										DefaultConnection = reader.Value.ToString();
+										config.DefaultConnection = reader.Value.ToString();
 										break;
 									case "SitePrefix":
 										reader.Read();
-										SitePrefix = reader.Value.ToString();
+										config.SitePrefix = reader.Value.ToString();
 										break;
 								}
 							}
@@ -69,7 +130,9 @@ namespace QuickAD.Models
 					}
 				}
 			}
-			catch (FileNotFoundException) { }
+			catch (FileNotFoundException) { return new AdConfiguration(); }
+
+			return config;
 		}
 
 		#endregion // Methods
