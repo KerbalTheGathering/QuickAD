@@ -15,6 +15,7 @@
 	<Grid Background="LightGray">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="40"/>
+			<RowDefinition Height="40"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
@@ -47,7 +48,20 @@
 		        Command="{Binding BrowseCommand}"
 		        CommandParameter="{Binding Text, ElementName=ConfigFilePath}"
 				/>
-		<DockPanel Grid.Row="1"
+		<ComboBox Name="ConfigNames"
+				  Grid.Row="1"
+				  Grid.Column="1"
+				  Grid.ColumnSpan="2"
+		          >
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding ConfigNames}"
+					           VerticalAlignment="Center"
+					           />
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+		<DockPanel Grid.Row="2"
 		           Grid.Column="0"
 		           Grid.ColumnSpan="4">
 			<Border Background="GhostWhite"

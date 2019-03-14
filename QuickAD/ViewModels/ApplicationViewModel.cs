@@ -6,6 +6,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
 using System.Windows.Input;
 
 namespace QuickAD.ViewModels
@@ -83,11 +84,12 @@ namespace QuickAD.ViewModels
 				configFile.AppSettings.Settings.Add("LastUsedConnections", connectionPath.Value);
 				configFile.Save(ConfigurationSaveMode.Modified);
 				ConfigurationManager.RefreshSection("appSettings");
-				AdConfiguration.GetConfigFromFile(Path.Combine(Directory.GetCurrentDirectory(), connectionPath.Value));
+				AdConfiguration.PopulateConfigurations(Path.Combine(Directory.GetCurrentDirectory(), connectionPath.Value));
+				//AdConfiguration.GetConfigFromFile(Path.Combine(Directory.GetCurrentDirectory(), connectionPath.Value));
 	        }
 	        else
 	        {
-		        AdConfiguration.GetConfigFromFile(connectionPath.Value);
+		        //AdConfiguration.GetConfigFromFile(connectionPath.Value);
 			}
 		}
 

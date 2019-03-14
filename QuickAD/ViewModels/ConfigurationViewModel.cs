@@ -16,6 +16,8 @@ namespace QuickAD.ViewModels
 
 		private AdService _adService;
 		private ICommand _browseCommand;
+		private List<string> _configNames;
+		private string _selectedConfig;
 		private ConfigDetailViewModel _configDetailViewModel;
 
 		#endregion // Fields
@@ -48,16 +50,36 @@ namespace QuickAD.ViewModels
 			get { return "Settings"; }
 		}
 
-		public string ConfigFile
+		public List<string> ConfigNames
 		{
-			get { return AdConfiguration.FilePath; }
+			get => _configNames;
 			set
 			{
-				if (value != AdConfiguration.FilePath)
-				{
-					AdConfiguration.FilePath = value;
-					OnPropertyChanged("ConfigFile");
-				}
+				if (_configNames == value) return;
+				_configNames = value;
+				OnPropertyChanged("ConfigNames");
+			}
+		}
+
+		public string SelectedConfig
+		{
+			get => _selectedConfig;
+			set
+			{
+				if (_selectedConfig == value) return;
+				_selectedConfig = value;
+				OnPropertyChanged("SelectedConfig");
+			}
+		}
+
+		public string ConfigFile
+		{
+			get => ConfigurationDetailViewModel.FilePath;
+			set
+			{
+				if (ConfigurationDetailViewModel.FilePath == value) return;
+				ConfigurationDetailViewModel.FilePath = value;
+				OnPropertyChanged("ConfigFile");
 			}
 		}
 
@@ -91,7 +113,7 @@ namespace QuickAD.ViewModels
 					configFile.Save(ConfigurationSaveMode.Modified);
 					ConfigurationManager.RefreshSection("appSettings");
 					connectionPath = configFile.AppSettings.Settings["LastUsedConnections"];
-					ConfigurationDetailViewModel.Refresh(connectionPath.Value);
+					//ConfigurationDetailViewModel.Refresh(connectionPath.Value);
 				}
 				else
 				{
@@ -103,7 +125,7 @@ namespace QuickAD.ViewModels
 					connectionPath.Value = fileDialog.SafeFileName;
 					configFile.Save(ConfigurationSaveMode.Modified);
 					ConfigurationManager.RefreshSection("appSettings");
-					ConfigurationDetailViewModel.Refresh(connectionPath.Value);
+					//ConfigurationDetailViewModel.Refresh(connectionPath.Value);
 				}
 			}
 		}

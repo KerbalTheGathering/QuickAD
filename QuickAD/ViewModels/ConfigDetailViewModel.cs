@@ -21,6 +21,17 @@ namespace QuickAD.ViewModels
 
 		public string Name => "Configuration Details";
 
+		public AdConfiguration CurrentConfig
+		{
+			get => _currentConfig;
+			set
+			{
+				if (_currentConfig == value) return;
+				_currentConfig = value;
+				OnPropertyChanged("CurrentConfig");
+			}
+		}
+
 		public string ConfigName
 		{
 			get => _currentConfig.ConfigName;
@@ -29,6 +40,17 @@ namespace QuickAD.ViewModels
 				if (_currentConfig.ConfigName == value) return;
 				_currentConfig.ConfigName = value;
 				OnPropertyChanged("ConfigName");
+			}
+		}
+
+		public string FilePath
+		{
+			get => _currentConfig.FilePath;
+			set
+			{
+				if (_currentConfig.FilePath == value) return;
+				_currentConfig.FilePath = value;
+				OnPropertyChanged("FilePath");
 			}
 		}
 

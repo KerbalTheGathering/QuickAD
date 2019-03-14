@@ -39,11 +39,8 @@ namespace QuickAD.Models
 		public static void SetCurrentConfigurationFromLastUsed()
 		{
 			var configFile = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);
-			var lastUsed = configFile.AppSettings.Settings["LastUsedConnections"];
-			if (lastUsed == null)
-			{
-				lastUsed = configFile.AppSettings.Settings["DefaultConnections"];
-			}
+			var lastUsed = configFile.AppSettings.Settings["LastUsedConnections"] 
+			               ?? configFile.AppSettings.Settings["DefaultConnections"];
 
 			foreach (var adConfiguration in Configurations)
 			{
@@ -58,6 +55,7 @@ namespace QuickAD.Models
 
 		/// <summary>
 		/// Populate the Configuration List from passed file paths.
+		/// TODO: Remove if having multiple config files is not ideal
 		/// </summary>
 		/// <param name="paths">File paths to create new AdConfiguration objects from.</param>
 		public static void PopulateConfigurations(List<string> paths)
@@ -72,6 +70,78 @@ namespace QuickAD.Models
 			}
 
 			Configurations = new List<AdConfiguration>(configs.OrderBy(u => u.ConfigName));
+		}
+
+		/// <summary>
+		/// Populate Configuration List from file containing multiple configurations.
+		/// TODO: Decide if I want to be able to add and edit the config files from the app, adding new configs as array elements.
+		/// </summary>
+		/// <param name="path">Path to config file.</param>
+		public static void PopulateConfigurations(string path)
+		{
+			if (path == null || !File.Exists(path)) return;
+
+			var configs = new List<AdConfiguration>();
+			using (var reader = new JsonTextReader(new StreamReader(path)))
+			{
+				while (reader.Read())
+				{
+					if(reader.TokenType == JsonToken.PropertyName 
+					   && reader.Value.ToString() == "Configurations")
+					{
+						reader.Read();
+						if (reader.TokenType != JsonToken.StartArray) continue;
+						while(reader.TokenType != JsonToken.EndArray)
+							configs.Add(ParseConfiguration(reader));
+
+						break;
+					}
+				}
+			}
+			Configurations = new List<AdConfiguration>(configs.OrderBy(u => u.ConfigName));
+		}
+
+		/// <summary>
+		/// Parse json object to AdConfiguration object
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <returns>Newly parsed AdConfiguration</returns>
+		private static AdConfiguration ParseConfiguration(JsonTextReader reader)
+		{
+			var newConfig = new AdConfiguration();
+			while (reader.TokenType != JsonToken.EndObject)
+			{
+				if (reader.TokenType != JsonToken.PropertyName) continue;
+				switch (reader.Value)
+				{
+					case "Name":
+						reader.Read();
+						newConfig.ConfigName = reader.Value.ToString();
+						break;
+					case "ComputerSearch":
+						reader.Read();
+						newConfig.ComputerSearch = reader.Value.ToString();
+						break;
+					case "StaffUserSearch":
+						reader.Read();
+						newConfig.StaffUserSearch = reader.Value.ToString();
+						break;
+					case "NonStaffUserSearch":
+						reader.Read();
+						newConfig.NonStaffUserSearch = reader.Value.ToString();
+						break;
+					case "DefaultConnection":
+						reader.Read();
+						newConfig.DefaultConnection = reader.Value.ToString();
+						break;
+					case "SitePrefix":
+						reader.Read();
+						newConfig.SitePrefix = reader.Value.ToString();
+						break;
+				}
+			}
+
+			return newConfig;
 		}
 
 		/// <summary>

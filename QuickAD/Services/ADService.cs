@@ -55,17 +55,17 @@ namespace QuickAD.Services
 				switch (connType)
 				{
 					case ConnectionType.Staff:
-						tempEntry = new DirectoryEntry(AdConfiguration.StaffUserSearch);
+						tempEntry = new DirectoryEntry(AdConfiguration.CurrentConfiguration.StaffUserSearch);
 						break;
 					case ConnectionType.NonStaff:
-						tempEntry = new DirectoryEntry(AdConfiguration.NonStaffUserSearch);
+						tempEntry = new DirectoryEntry(AdConfiguration.CurrentConfiguration.NonStaffUserSearch);
 						break;
 					case ConnectionType.Computers:
-						tempEntry = new DirectoryEntry(AdConfiguration.ComputerSearch);
+						tempEntry = new DirectoryEntry(AdConfiguration.CurrentConfiguration.ComputerSearch);
 						break;
 					case ConnectionType.Default:
 					default:
-						tempEntry = new DirectoryEntry(AdConfiguration.DefaultConnection);
+						tempEntry = new DirectoryEntry(AdConfiguration.CurrentConfiguration.DefaultConnection);
 						break;
 				}
 				entry = tempEntry;
@@ -91,17 +91,17 @@ namespace QuickAD.Services
 			switch (connType)
 			{
 				case ConnectionType.Staff:
-					path = AdConfiguration.StaffUserSearch;
+					path = AdConfiguration.CurrentConfiguration.StaffUserSearch;
 					break;
 				case ConnectionType.NonStaff:
-					path = AdConfiguration.NonStaffUserSearch;
+					path = AdConfiguration.CurrentConfiguration.NonStaffUserSearch;
 					break;
 				case ConnectionType.Computers:
-					path = AdConfiguration.ComputerSearch;
+					path = AdConfiguration.CurrentConfiguration.ComputerSearch;
 					break;
 				case ConnectionType.Default:
 				default:
-					path = AdConfiguration.DefaultConnection;
+					path = AdConfiguration.CurrentConfiguration.DefaultConnection;
 					break;
 			}
 
