@@ -1,6 +1,5 @@
 ﻿using QuickAD.Helper_Classes;
 using QuickAD.Models;
-using QuickAD.Services;
 
 namespace QuickAD.ViewModels
 {
@@ -8,72 +7,82 @@ namespace QuickAD.ViewModels
     {
 		#region Fields
 
-		private readonly AdService _adService;
-		private string _sitePrefix;
-		private string _computerSearch;
-		private string _staffUserSearch;
-		private string _nonStaffUserSearch;
-		private string _defaultConnection;
+		private AdConfiguration _currentConfig;
 
 		#endregion // Fields
 
-		public ConfigDetailViewModel(AdService adService)
+		public ConfigDetailViewModel()
 		{
-			_adService = adService;
-			Refresh(AdConfiguration.FilePath);
+			Refresh(AdConfiguration.CurrentConfiguration);
 		}
 
 		#region Properties
 
-		public string Name { get { return "Configuration Details"; } }
+		public string Name => "Configuration Details";
+
+		public AdConfiguration CurrentConfig
+		{
+			get => _currentConfig;
+			set
+			{
+				if (_currentConfig == value) return;
+				_currentConfig = value;
+				OnPropertyChanged("CurrentConfig");
+			}
+		}
+
+		public string ConfigName
+		{
+			get => _currentConfig.ConfigName;
+			set
+			{
+				if (_currentConfig.ConfigName == value) return;
+				_currentConfig.ConfigName = value;
+				OnPropertyChanged("ConfigName");
+			}
+		}
 
 		public string SitePrefix
 		{
-			get { return _sitePrefix; }
+			get => _currentConfig.SitePrefix;
 			set
 			{
-				if (_sitePrefix != value)
-				{
-					_sitePrefix = value;
-					OnPropertyChanged("SitePrefix");
-				}
+				if (_currentConfig.SitePrefix == value) return;
+				_currentConfig.SitePrefix = value;
+				OnPropertyChanged("SitePrefix");
 			}
 		}
 
 		public string ComputerConnection
 		{
-			get { return _computerSearch; }
+			get => _currentConfig.ComputerSearch;
 			set
 			{
-				if (_computerSearch != value)
-				{
-					_computerSearch = value;
-					OnPropertyChanged("ComputerConnection");
-				}
+				if (_currentConfig.ComputerSearch == value) return;
+				_currentConfig.ComputerSearch = value;
+				OnPropertyChanged("ComputerConnection");
 			}
 		}
 
 		public string StaffUserConnection
 		{
-			get { return _staffUserSearch; }
+			get => _currentConfig.StaffUserSearch;
 			set
 			{
-				if (_staffUserSearch != value)
-				{
-					_staffUserSearch = value;
-					OnPropertyChanged("StaffUserConnection");
-				}
+				if (_currentConfig.StaffUserSearch == value) return;
+				_currentConfig.StaffUserSearch = value;
+				OnPropertyChanged("StaffUserConnection");
 			}
 		}
 
 		public string NonStaffUserConnection
 		{
-			get { return _nonStaffUserSearch; }
+			get => _currentConfig.NonStaffUserSearch;
 			set
 			{
-				if (_nonStaffUserSearch != value)
+				if (_currentConfig.NonStaffUserSearch == value) return;
 				{
-					_nonStaffUserSearch = value;
+					_currentConfig.NonStaffUserSearch = value;
 					OnPropertyChanged("NonStaffUserConnection");
 				}
 			}
@@ -81,14 +90,12 @@ namespace QuickAD.ViewModels
 
 		public string DefaultConnection
 		{
-			get { return _defaultConnection; }
+			get => _currentConfig.DefaultConnection;
 			set
 			{
-				if (_defaultConnection != value)
-				{
-					_defaultConnection = value;
-					OnPropertyChanged("DefaultConnection");
-				}
+				if (_currentConfig.DefaultConnection == value) return;
+				_currentConfig.DefaultConnection = value;
+				OnPropertyChanged("DefaultConnection");
 			}
 		}
 
@@ -96,14 +103,16 @@ namespace QuickAD.ViewModels
 
 		#region Methods
 
-		public void Refresh(string path)
+		public void Refresh(AdConfiguration config)
 		{
-			if (path != AdConfiguration.FilePath)	AdConfiguration.GetConfigFromFile(path);
-			ComputerConnection = AdConfiguration.ComputerSearch;
-			StaffUserConnection = AdConfiguration.StaffUserSearch;
-			NonStaffUserConnection = AdConfiguration.NonStaffUserSearch;
-			DefaultConnection = AdConfiguration.DefaultConnection;
-			SitePrefix = AdConfiguration.SitePrefix;
+			if (config == new AdConfiguration())	return;
+			_currentConfig = config;
+			OnPropertyChanged("ConfigName");
+			OnPropertyChanged("SitePrefix");
+			OnPropertyChanged("ComputerConnection");
+			OnPropertyChanged("StaffUserConnection");
+			OnPropertyChanged("NonStaffUserConnection");
+			OnPropertyChanged("DefaultConnection");
 		}
 
 		#endregion // Methods

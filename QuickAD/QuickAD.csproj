@@ -100,7 +100,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Helper Classes\ExcelManipulator.cs" />
-    <Compile Include="Models\ADConfiguration.cs" />
+    <Compile Include="Models\AdConfiguration.cs" />
     <Compile Include="Models\BatchImport.cs" />
     <Compile Include="Helper Classes\DescriptionPrefix.cs" />
     <Compile Include="Models\UserSearchResult.cs" />
@@ -221,7 +221,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="default.json">
+    <None Include="settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="PrefixData.json">

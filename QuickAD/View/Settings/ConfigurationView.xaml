@@ -14,6 +14,7 @@
 	</UserControl.Resources>
 	<Grid Background="LightGray">
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="40"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
@@ -24,30 +25,23 @@
 			<ColumnDefinition Width="200"/>
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
-
-		<Label Grid.Row="0"
+		<Label Grid.Row="1"
 		       Grid.Column="0"
-		       Margin="10,5,0,5" 
+			   Margin="10,5,0,5"
 			   VerticalContentAlignment="Center"
-		       Content="Configuration File:"
+			   Content="Configuration:"
 		       />
-		<TextBox Grid.Row="0"
-		         Grid.Column="1"
-				 Grid.ColumnSpan="2"
-		         Margin="5"
-				 VerticalContentAlignment="Center"
-				 Text="{Binding ConfigFile}"
-				 Name="ConfigFilePath"
-		         />
-		<Button Grid.Row="0"
-		        Grid.Column="3"
-		        Margin="0,5,15,5" 
-		        Padding="5" 
-		        Content="Browse"
-		        Command="{Binding BrowseCommand}"
-		        CommandParameter="{Binding Text, ElementName=ConfigFilePath}"
-				/>
-		<DockPanel Grid.Row="1"
+		<ComboBox Name="ConfigNames"
+				  Grid.Row="1"
+				  Grid.Column="1"
+				  Grid.ColumnSpan="2"
+				  Margin="5"
+				  VerticalContentAlignment="Center"
+				  ItemsSource="{Binding Path=Configs}"
+				  SelectedItem="{Binding Path=SelectedConfig}"
+				  DisplayMemberPath="ConfigName"
+		          />
+		<DockPanel Grid.Row="2"
 		           Grid.Column="0"
 		           Grid.ColumnSpan="4">
 			<Border Background="GhostWhite"
