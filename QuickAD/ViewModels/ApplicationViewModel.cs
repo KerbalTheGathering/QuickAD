@@ -21,7 +21,6 @@ namespace QuickAD.ViewModels
 
         public ApplicationViewModel()
         {
-			DescriptionPrefix.Initialize();
 			LoadAppSettings();
 			var adService = new AdService();
 			PageViewModels.Add(new HomeViewModel(adService));
@@ -73,6 +72,7 @@ namespace QuickAD.ViewModels
 		/// </summary>
 		private void LoadAppSettings()
 		{
+			DescriptionPrefix.Initialize();
 			AdConfiguration.InitializeConfiguration();
 		}
 

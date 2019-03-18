@@ -9,7 +9,7 @@ namespace QuickAD.ViewModels
     {
 		#region Fields
 
-		private AdService _adService;
+		private readonly AdService _adService;
 		private readonly ObservableCollection<AdConfiguration> _configs;
 		private AdConfiguration _selectedConfig;
 		private readonly ConfigDetailViewModel _configDetailViewModel;
