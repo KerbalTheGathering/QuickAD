@@ -1,0 +1,20 @@
+﻿{
+  "Configurations": [
+    {
+      "Name": "\"Default_1\"",
+      "SitePrefix": "SITE_CODE_1",
+      "ComputerSearch": "LDAP://OU=\"Site_1 Computers\",OU=\"Computers\",DC=example,DC=com",
+      "StaffUserSearch": "LDAP://OU=\"Site_1 Staff\",OU=\"Staff\",OU=\"All Users\",DC=example,DC=com",
+      "NonStaffUserSearch": "LDAP://OU=\"Site_1 NonStaff Users\",OU=\"NonStaff Users\",OU=\"All Users\",DC=example,DC=com",
+      "DefaultConnection": "LDAP://DC=example,DC=com"
+    },
+    {
+      "Name": "\"Default_0\"",
+      "SitePrefix": "\"SITE_CODE_0\"",
+      "ComputerSearch": "LDAP://OU=\"Site_0 Computers\",OU=\"Computers\",DC=example,DC=com",
+      "StaffUserSearch": "LDAP://OU=\"Site_0 Staff\",OU=\"Staff\",OU=\"All Users\",DC=example,DC=com",
+      "NonStaffUserSearch": "LDAP://OU=\"Site_0 NonStaff Users\",OU=\"NonStaff Users\",OU=\"All Users\",DC=example,DC=com",
+      "DefaultConnection": "LDAP://DC=example,DC=com"
+    }
+  ]
+}

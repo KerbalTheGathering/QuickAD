@@ -2,11 +2,7 @@
 using QuickAD.Models;
 using QuickAD.Services;
 using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Windows;
 using System.Windows.Input;
 
 namespace QuickAD.ViewModels
@@ -54,11 +50,9 @@ namespace QuickAD.ViewModels
             get => _currentPageViewModel;
             set
             {
-                if (_currentPageViewModel != value)
-                {
-                    _currentPageViewModel = value;
-                    OnPropertyChanged("CurrentPageViewModel");
-                }
+	            if (_currentPageViewModel == value) return;
+	            _currentPageViewModel = value;
+                OnPropertyChanged("CurrentPageViewModel");
             }
         }
 
@@ -74,23 +68,12 @@ namespace QuickAD.ViewModels
             CurrentPageViewModel = PageViewModels.FirstOrDefault(vm => vm == viewModel);
         }
 
-        private void LoadAppSettings()
-        {
-	        var configFile = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);
-	        var connectionPath = configFile.AppSettings.Settings["LastUsedConnections"];
-	        if (connectionPath == null)
-	        {
-		        connectionPath = configFile.AppSettings.Settings["DefaultConnections"];
-				configFile.AppSettings.Settings.Add("LastUsedConnections", connectionPath.Value);
-				configFile.Save(ConfigurationSaveMode.Modified);
-				ConfigurationManager.RefreshSection("appSettings");
-				AdConfiguration.PopulateConfigurations(Path.Combine(Directory.GetCurrentDirectory(), connectionPath.Value));
-				//AdConfiguration.GetConfigFromFile(Path.Combine(Directory.GetCurrentDirectory(), connectionPath.Value));
-	        }
-	        else
-	        {
-		        //AdConfiguration.GetConfigFromFile(connectionPath.Value);
-			}
+		/// <summary>
+		/// Initializes app settings and connection configurations.
+		/// </summary>
+		private void LoadAppSettings()
+		{
+			AdConfiguration.InitializeConfiguration();
 		}
 
         #endregion // Methods

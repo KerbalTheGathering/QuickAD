@@ -1,6 +1,5 @@
 ﻿using QuickAD.Helper_Classes;
 using QuickAD.Models;
-using QuickAD.Services;
 
 namespace QuickAD.ViewModels
 {
@@ -40,17 +39,6 @@ namespace QuickAD.ViewModels
 				if (_currentConfig.ConfigName == value) return;
 				_currentConfig.ConfigName = value;
 				OnPropertyChanged("ConfigName");
-			}
-		}
-
-		public string FilePath
-		{
-			get => _currentConfig.FilePath;
-			set
-			{
-				if (_currentConfig.FilePath == value) return;
-				_currentConfig.FilePath = value;
-				OnPropertyChanged("FilePath");
 			}
 		}
 
@@ -125,11 +113,6 @@ namespace QuickAD.ViewModels
 			OnPropertyChanged("StaffUserConnection");
 			OnPropertyChanged("NonStaffUserConnection");
 			OnPropertyChanged("DefaultConnection");
-			//ComputerConnection = AdConfiguration.ComputerSearch;
-			//StaffUserConnection = AdConfiguration.StaffUserSearch;
-			//NonStaffUserConnection = AdConfiguration.NonStaffUserSearch;
-			//DefaultConnection = AdConfiguration.DefaultConnection;
-			//SitePrefix = AdConfiguration.SitePrefix;
 		}
 
 		#endregion // Methods

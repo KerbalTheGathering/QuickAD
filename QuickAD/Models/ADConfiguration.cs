@@ -36,45 +36,45 @@ namespace QuickAD.Models
 		/// <summary>
 		/// Use AppSettings in App.config to set the last used configuration as active.
 		/// </summary>
-		public static void SetCurrentConfigurationFromLastUsed()
+		public static void InitializeConfiguration()
 		{
-			var configFile = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);
-			var lastUsed = configFile.AppSettings.Settings["LastUsedConnections"] 
-			               ?? configFile.AppSettings.Settings["DefaultConnections"];
+			PopulateConfigurations(Path.Combine(Directory.GetCurrentDirectory(), "settings.json"));
 
-			foreach (var adConfiguration in Configurations)
+			var configFile = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);
+			var lastUsed = configFile.AppSettings.Settings["LastUsedConfig"];
+			if (lastUsed.Value == string.Empty)
 			{
-				if (lastUsed.Value == adConfiguration.SitePrefix)
+				CurrentConfiguration = Configurations[0];
+				lastUsed.Value = CurrentConfiguration.ConfigName;
+				configFile.Save(ConfigurationSaveMode.Modified);
+				ConfigurationManager.RefreshSection("appSettings");
+			}
+			else
+			{
+				foreach (var adConfiguration in Configurations)
 				{
-					CurrentConfiguration = adConfiguration;
+					if (lastUsed.Value == adConfiguration.ConfigName)
+					{
+						CurrentConfiguration = adConfiguration;
+					}
 				}
 			}
-
-			if (CurrentConfiguration == null) CurrentConfiguration = Configurations[0];
 		}
 
 		/// <summary>
-		/// Populate the Configuration List from passed file paths.
-		/// TODO: Remove if having multiple config files is not ideal
+		/// Update the application's config file with the name of the current connection configuration.
 		/// </summary>
-		/// <param name="paths">File paths to create new AdConfiguration objects from.</param>
-		public static void PopulateConfigurations(List<string> paths)
+		public static void UpdateLastUsedConfig()
 		{
-			if (paths == null) return;
-			var configs = new List<AdConfiguration>();
-			foreach (var path in paths)
-			{
-				var tmp = GetConfigFromFile(path);
-				if (tmp == new AdConfiguration()) continue;
-				configs.Add(tmp);
-			}
-
-			Configurations = new List<AdConfiguration>(configs.OrderBy(u => u.ConfigName));
+			var configFile = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);
+			var lastUsed = configFile.AppSettings.Settings["LastUsedConfig"];
+			lastUsed.Value = CurrentConfiguration.ConfigName;
+			configFile.Save(ConfigurationSaveMode.Modified);
+			ConfigurationManager.RefreshSection("appSettings");
 		}
 
 		/// <summary>
 		/// Populate Configuration List from file containing multiple configurations.
-		/// TODO: Decide if I want to be able to add and edit the config files from the app, adding new configs as array elements.
 		/// </summary>
 		/// <param name="path">Path to config file.</param>
 		public static void PopulateConfigurations(string path)
@@ -111,7 +111,11 @@ namespace QuickAD.Models
 			var newConfig = new AdConfiguration();
 			while (reader.TokenType != JsonToken.EndObject)
 			{
-				if (reader.TokenType != JsonToken.PropertyName) continue;
+				if (reader.TokenType != JsonToken.PropertyName)
+				{
+					reader.Read();
+					continue;
+				}
 				switch (reader.Value)
 				{
 					case "Name":
@@ -141,6 +145,7 @@ namespace QuickAD.Models
 				}
 			}
 
+			reader.Read();
 			return newConfig;
 		}
 
